@@ -17,7 +17,7 @@ Crea una nuova classe TaskModel (sempre nel package model) e prova a implementar
 */
 public class TaskModel{
     private List<Task> tasks;
-    public TaskModel(List<Task> tasks){
+    public TaskModel(){
         this.tasks = new ArrayList<>();
     }
     public void aggiungiTask(Task t){

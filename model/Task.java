@@ -9,7 +9,7 @@ import java.util.UUID;
 public class Task {
     private final UUID id;
     private String descrizione;
-    private enum Priorita{
+    public enum Priorita{
         BASSA, MEDIA, ALTA
     }
     private Priorita priorita;
