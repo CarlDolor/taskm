@@ -19,7 +19,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.List;
 /*
 1. Elementi Grafici (Campi della classe)
@@ -77,12 +79,36 @@ public class TaskView{
         masterFrame.setLayout(new BorderLayout());
         //Nord
         JPanel nordJPanel = new JPanel();
-         
+        
+        /* 
         nordJPanel.setLayout(new FlowLayout());
         nordJPanel.add(inserimentoDescrizioneTextField);
         nordJPanel.add(sceltaPrioritaBox);
         nordJPanel.add(aggiungiButton);
         nordJPanel.getPreferredSize();
+        */
+        nordJPanel.setLayout(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(25, 25, 5, 25);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        nordJPanel.add(inserimentoDescrizioneTextField, gbc);
+        gbc.insets = new Insets(0, 25, 0, 5);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.weightx = 0;
+        nordJPanel.add(sceltaPrioritaBox, gbc);
+        gbc.insets = new Insets(0, 5, 0, 25);
+        gbc.gridx=1;
+        gbc.gridy=1;
+        gbc.gridwidth = 1;
+        gbc.weightx = 0;
+        nordJPanel.add(aggiungiButton, gbc);
         
         //Centro
         JPanel centroJPanel = new JPanel();
