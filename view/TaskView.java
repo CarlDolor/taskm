@@ -21,7 +21,9 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
+import java.lang.classfile.constantpool.ClassEntry;
 import java.util.List;
 /*
 1. Elementi Grafici (Campi della classe)
@@ -73,59 +75,72 @@ public class TaskView{
         aggiungiButton = new JButton("Aggiungi");
         completaButton = new JButton("Completa");
         eliminaButton = new JButton("Elimina");
-        inserimentoDescrizioneTextField = new JTextField(10);
+        inserimentoDescrizioneTextField = new JTextField(50);
 
         JPanel masterFrame = new JPanel();
         masterFrame.setLayout(new BorderLayout());
         //Nord
         JPanel nordJPanel = new JPanel();
-        
-        /* 
-        nordJPanel.setLayout(new FlowLayout());
-        nordJPanel.add(inserimentoDescrizioneTextField);
-        nordJPanel.add(sceltaPrioritaBox);
-        nordJPanel.add(aggiungiButton);
-        nordJPanel.getPreferredSize();
-        */
         nordJPanel.setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(25, 25, 5, 25);
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.weightx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
         nordJPanel.add(inserimentoDescrizioneTextField, gbc);
-        gbc.insets = new Insets(0, 25, 0, 5);
+        gbc.insets = new Insets(0, 25, 25, 5);
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
-        gbc.weightx = 0;
+        gbc.weightx = 0.3;
         nordJPanel.add(sceltaPrioritaBox, gbc);
-        gbc.insets = new Insets(0, 5, 0, 25);
+        gbc.insets = new Insets(0, 5, 25, 25);
         gbc.gridx=1;
-        gbc.gridy=1;
-        gbc.gridwidth = 1;
-        gbc.weightx = 0;
+        gbc.weightx = 0.7;
         nordJPanel.add(aggiungiButton, gbc);
-        
+
         //Centro
-        JPanel centroJPanel = new JPanel();
-        centroJPanel.add(taskJscrollPane);
+        JPanel centraPanel = new JPanel();
+        centraPanel.setLayout(new GridBagLayout());
+        gbc.insets = new Insets(100, 0, 100, 0);
+        gbc.gridx = 0;
+        gbc.gridy=0;
+        gbc.weightx = 0.2;
+        gbc.weighty=0.5;
+        gbc.fill = GridBagConstraints.BOTH;
+        centraPanel.add(Box.createGlue(), gbc);
+        gbc.gridy=0;
+        gbc.gridx = 1;
+        gbc.weightx = 0.6;
+        gbc.fill = GridBagConstraints.BOTH;
+        centraPanel.add(taskJscrollPane, gbc);
+        gbc.gridx = 2;
+        gbc.gridy=0;
+        gbc.weightx = 0.2;
+        gbc.fill = GridBagConstraints.BOTH;
+        centraPanel.add(Box.createGlue(), gbc);
 
         //South
         JPanel southJPanel = new JPanel();
-        southJPanel.setLayout(new BoxLayout(southJPanel, BoxLayout.X_AXIS));
-        southJPanel.add(Box.createHorizontalGlue());
-        southJPanel.add(completaButton);
-        southJPanel.add(Box.createHorizontalStrut(10));
-        southJPanel.add(eliminaButton);
-        southJPanel.add(Box.createHorizontalGlue());
+        southJPanel.setLayout(new GridBagLayout());
+        gbc.insets = new Insets(25, 50, 25, 25);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.weightx = 0.5;
+        gbc.fill = GridBagConstraints.BOTH;
+        southJPanel.add(completaButton, gbc);
+        gbc.insets = new Insets(25, 50, 25, 25);
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        southJPanel.add(eliminaButton, gbc);
 
 
         masterFrame.add(nordJPanel, BorderLayout.NORTH);
-        masterFrame.add(centroJPanel, BorderLayout.CENTER);
+        masterFrame.add(centraPanel, BorderLayout.CENTER);
         masterFrame.add(southJPanel, BorderLayout.SOUTH);
 
         JFrame frame = new JFrame();
