@@ -14,10 +14,6 @@ public class Task {
     }
     private Priorita priorita;
     private boolean completata;
-    public static void main(String args[]){
-        Task t = new Task("Fare coccole al cane", Priorita.ALTA);
-        System.out.println(t.toString());
-    }
     public Task(String descrizione, Priorita priorita){
         this.id = UUID.randomUUID();
         setDescrizione(descrizione);
