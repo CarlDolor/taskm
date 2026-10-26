@@ -2,7 +2,13 @@ package controller;
 import view.TaskView;
 import model.TaskModel;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 import model.Task;
 
@@ -16,6 +22,29 @@ public class TaskController{
     public TaskController(TaskModel tm, TaskView tw){
         this.tm = tm;
         this.tw = tw;
+        this.tw.getAggiungiButton().addActionListener(e -> aggiungiNuovaTask());
+        this.tw.getEliminaButton().addActionListener(e -> eliminaTaskSelezionata());
+        this.tw.getCompletaButton().addActionListener(e -> completaTaskSelezionata());
+
+        // Shortcut ENTER -> aggiungiNuovaTask
+        tw.getAggiungiButton().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "aggiungi");
+        tw.getAggiungiButton().getActionMap().put("aggiungi", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                aggiungiNuovaTask();
+            }
+        });
+
+        // Shortcut DELETE -> eliminaTaskSelezionata
+        tw.getEliminaButton().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "elimina");
+        tw.getEliminaButton().getActionMap().put("elimina", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                eliminaTaskSelezionata();
+            }
+        });
     }
     private void aggiungiNuovaTask(){
         /*
@@ -32,10 +61,11 @@ public class TaskController{
         Pulisce il campo di testo (view.clearDescrizioneText()).
 
         Cruciale: Dice alla View di aggiornarsi passando la nuova lista (view.aggiornaLista(model.getTasks())). */
-        if (tw.getInserimentoDescrizione().isEmpty()) {
+        String testo = tw.getInserimentoDescrizione();
+        if (testo == null || testo.trim().isEmpty()) {
             return;
         }
-        Task t = new Task(tw.getInserimentoDescrizione(), tw.getSceltaPriorita());
+        Task t = new Task(testo.trim(), tw.getSceltaPriorita());
         tm.aggiungiTask(t);
         tw.clearDescrizioneText();
         tw.aggiornaLista(tm.getTasks());

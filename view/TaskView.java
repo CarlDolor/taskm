@@ -67,6 +67,10 @@ public class TaskView{
     private JTextField inserimentoDescrizioneTextField;
     private JComboBox<Priorita> sceltaPrioritaBox = new JComboBox<>(Task.Priorita.values());
     private JList<Task> elencoTask = new JList<>(new DefaultListModel<Task>());
+    {
+        elencoTask.setCellRenderer(new TaskCellRenderer());
+        elencoTask.setFixedCellHeight(52);
+    }
     private JButton aggiungiButton, completaButton, eliminaButton;
     private JScrollPane taskJscrollPane = new JScrollPane(elencoTask);
 
@@ -105,7 +109,7 @@ public class TaskView{
         //Centro
         JPanel centraPanel = new JPanel();
         centraPanel.setLayout(new GridBagLayout());
-        gbc.insets = new Insets(100, 0, 100, 0);
+        gbc.insets = new Insets(20, 0, 20, 0);
         gbc.gridx = 0;
         gbc.gridy=0;
         gbc.weightx = 0.2;
@@ -146,6 +150,7 @@ public class TaskView{
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setMinimumSize(new Dimension(700,700));
         frame.setSize(500, 500);
         frame.add(masterFrame, BorderLayout.CENTER);
         frame.setResizable(true);

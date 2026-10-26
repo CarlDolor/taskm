@@ -43,6 +43,6 @@ public class Task {
     }
     @Override
     public String toString() {
-        return "Task " + getId() + "\nDescrizione: " + getDescrizione() + "\nPriorita': " + getPriorita() + "\nIsCompletata: " + isCompletata();
+        return "Task " + getId() + "\n Descrizione: " + getDescrizione() + "\n Priorita': " + getPriorita() + "\n IsCompletata: " + isCompletata();
     }
 }
