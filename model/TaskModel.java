@@ -20,10 +20,26 @@ public class TaskModel{
     public TaskModel(){
         this.tasks = new ArrayList<>();
     }
+    /**
+     * @param t la task da aggiungere
+     * @throws IllegalArgumentException se t è null (Comandamento #4, #9)
+     */
     public void aggiungiTask(Task t){
+        // Fail-Fast (Comandamento #4): convalida del parametro per prevenire inconsistenze
+        if (t == null) {
+            throw new IllegalArgumentException("Non è possibile aggiungere una task null.");
+        }
         tasks.add(t);
     }
+    /**
+     * @param t la task da rimuovere
+     * @throws IllegalArgumentException se t è null (Comandamento #4, #9)
+     */
     public void rimuoviTask(Task t){
+        // Fail-Fast (Comandamento #4): convalida del parametro
+        if (t == null) {
+            throw new IllegalArgumentException("Non è possibile rimuovere una task null.");
+        }
         tasks.remove(t);
     }
     public List<Task> getTasks(){

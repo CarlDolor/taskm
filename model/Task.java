@@ -14,16 +14,35 @@ public class Task {
     }
     private Priorita priorita;
     private boolean completata;
+    /**
+     * @param descrizione testo della task
+     * @param priorita livello di priorità
+     * @throws IllegalArgumentException se descrizione è vuota/null o priorità è null (Comandamento #4, #9)
+     */
     public Task(String descrizione, Priorita priorita){
         this.id = UUID.randomUUID();
         setDescrizione(descrizione);
         setPriorita(priorita);
         setCompletata(false);
     }
+    /**
+     * @throws IllegalArgumentException se descrizione è null o vuota (Comandamento #4, #9)
+     */
     public void setDescrizione(String descrizione) {
+        // Fail-Fast (Comandamento #4): verifica immediata del parametro
+        if (descrizione == null || descrizione.trim().isEmpty()) {
+            throw new IllegalArgumentException("La descrizione non può essere null o vuota.");
+        }
         this.descrizione = descrizione;
     }
+    /**
+     * @throws IllegalArgumentException se priorita è null (Comandamento #4, #9)
+     */
     public void setPriorita(Priorita priorita) {
+        // Fail-Fast (Comandamento #4): verifica immediata del parametro
+        if (priorita == null) {
+            throw new IllegalArgumentException("La priorità non può essere null.");
+        }
         this.priorita = priorita;
     }
     public void setCompletata(boolean completata) {

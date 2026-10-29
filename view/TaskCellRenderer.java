@@ -39,6 +39,14 @@ public class TaskCellRenderer extends JPanel implements ListCellRenderer<Task> {
     public Component getListCellRendererComponent(JList<? extends Task> list, Task task,
             int index, boolean isSelected, boolean cellHasFocus) {
 
+        // Prevenzione (Comandamento #2): prevenire NullPointerException se task è null
+        if (task == null) {
+            descrizioneLabel.setText("");
+            prioritaLabel.setText("");
+            statoLabel.setText("");
+            return this;
+        }
+
         // --- Descrizione + ID ---
         String id = task.getId().toString().substring(0, 8);
         if (task.isCompletata()) {

@@ -11,11 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import model.Task;
-
-/*
-
-*/
-
 public class TaskController{
     private TaskModel tm;
     private TaskView tw;
@@ -27,8 +22,7 @@ public class TaskController{
         this.tw.getCompletaButton().addActionListener(e -> completaTaskSelezionata());
 
         // Shortcut ENTER -> aggiungiNuovaTask
-        tw.getAggiungiButton().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-            .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "aggiungi");
+        tw.getAggiungiButton().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "aggiungi");
         tw.getAggiungiButton().getActionMap().put("aggiungi", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -37,8 +31,7 @@ public class TaskController{
         });
 
         // Shortcut DELETE -> eliminaTaskSelezionata
-        tw.getEliminaButton().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-            .put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "elimina");
+        tw.getEliminaButton().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "elimina");
         tw.getEliminaButton().getActionMap().put("elimina", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -65,6 +58,11 @@ public class TaskController{
         if (testo == null || testo.trim().isEmpty()) {
             return;
         }
+        // Prevenzione (Comandamento #2): verifica preventiva della priorità
+        // invece di catturare una possibile eccezione a runtime
+        if (tw.getSceltaPriorita() == null) {
+            return;
+        }
         Task t = new Task(testo.trim(), tw.getSceltaPriorita());
         tm.aggiungiTask(t);
         tw.clearDescrizioneText();
@@ -80,11 +78,13 @@ public class TaskController{
 
         Aggiorna la View.
         */
-       if (tw.getTaskSelected() == null) {
+        // Prevenzione (Comandamento #2): controllo preventivo su task selezionata
+        Task selected = tw.getTaskSelected();
+        if (selected == null) {
             return;
-       }
-       tm.rimuoviTask(tw.getTaskSelected());
-       tw.aggiornaLista(tm.getTasks());
+        }
+        tm.rimuoviTask(selected);
+        tw.aggiornaLista(tm.getTasks());
     }
     private void completaTaskSelezionata(){
         /*
@@ -94,10 +94,12 @@ public class TaskController{
 
         Aggiorna la View (così il toString() aggiornato con la "X" verrà disegnato a schermo).
          */
-        if (tw.getTaskSelected() == null) {
-            return ;
+        // Prevenzione (Comandamento #2): controllo preventivo su task selezionata invece di catch (Exception e)
+        Task selected = tw.getTaskSelected();
+        if (selected == null) {
+            return;
         }
-        tw.getTaskSelected().setCompletata(true);
+        selected.setCompletata(true);
         tw.aggiornaLista(tm.getTasks());
     }
 
@@ -105,10 +107,8 @@ public class TaskController{
         SwingUtilities.invokeLater(() -> {
             // 1. Crei il Model
             TaskModel model = new TaskModel();
-            
             // 2. Crei la View
             TaskView view = new TaskView();
-            
             // 3. Crei il Controller e li colleghi
             TaskController controller = new TaskController(model, view);
         });

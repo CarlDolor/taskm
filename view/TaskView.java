@@ -23,7 +23,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.lang.classfile.constantpool.ClassEntry;
 import java.util.List;
 /*
 1. Elementi Grafici (Campi della classe)
@@ -151,7 +150,6 @@ public class TaskView{
         frame.setLayout(new BorderLayout());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setMinimumSize(new Dimension(700,700));
-        frame.setSize(500, 500);
         frame.add(masterFrame, BorderLayout.CENTER);
         frame.setResizable(true);
         frame.setVisible(true);
@@ -174,15 +172,32 @@ public class TaskView{
         inserimentoDescrizioneTextField.setText("");
     }
 
+    /**
+     * @return il valore selezionato del combobox
+     * @throws IllegalStateException se nessun valore è selezionato (Comandamento #4, #9)
+     */
     public Priorita getSceltaPriorita() {
-        return (Priorita) sceltaPrioritaBox.getSelectedItem();
+        // Prevenzione di NullPointerException con validazione di stato (Comandamento #4)
+        Object selected = sceltaPrioritaBox.getSelectedItem();
+        if (selected == null) {
+            throw new IllegalStateException("Nessuna priorità selezionata nel ComboBox.");
+        }
+        return (Priorita) selected;
     }
 
     public Task getTaskSelected(){
         return elencoTask.getSelectedValue();
     }
 
+    /**
+     * @param tasks lista delle task da renderizzare a video
+     * @throws IllegalArgumentException se la lista passata è null (Comandamento #4, #9)
+     */
     public void aggiornaLista(List<Task> tasks){
+        // Fail-Fast (Comandamento #4): verifica parametro lista non nullo
+        if (tasks == null) {
+            throw new IllegalArgumentException("La lista di task non può essere null.");
+        }
         DefaultListModel<Task> model = (DefaultListModel<Task>) elencoTask.getModel();
         model.clear();
         for (Task task : tasks) {
