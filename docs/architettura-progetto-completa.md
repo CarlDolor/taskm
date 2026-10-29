@@ -133,12 +133,15 @@ Un POJO (Plain Old Java Object) che rappresenta una singola attività.
 | Campo | Tipo | Descrizione |
 |-------|------|-------------|
 | `id` | `UUID` (final) | Identificativo univoco, generato automaticamente alla creazione |
-| `descrizione` | `String` | Testo descrittivo dell'attività |
-| `priorita` | `Priorita` (enum) | Livello di urgenza: `BASSA`, `MEDIA`, `ALTA` |
+| `descrizione` | `String` | Testo descrittivo dell'attività (non può essere `null` o vuoto) |
+| `priorita` | `Priorita` (enum) | Livello di urgenza: `BASSA`, `MEDIA`, `ALTA` (non può essere `null`) |
 | `completata` | `boolean` | Stato di completamento |
 
 > [!NOTE]
 > L'`id` è dichiarato `final` e viene generato con `UUID.randomUUID()` nel costruttore. Questo garantisce che ogni task sia **univocamente identificabile** per tutta la sua esistenza, senza possibilità di collisioni.
+
+> [!IMPORTANT]
+> **Validazione Fail-Fast**: I setter `setDescrizione` e `setPriorita` convalidano immediatamente i valori ricevuti, sollevando `IllegalArgumentException` in caso di valori non conformi (stringa vuota/null o priorità null).
 
 L'enum `Priorita` è definito come **classe interna** di `Task`:
 
@@ -154,8 +157,8 @@ Gestisce la lista delle task in memoria. È il **"magazzino dati"** dell'applica
 
 | Metodo | Cosa fa |
 |--------|---------|
-| `aggiungiTask(Task t)` | Aggiunge una task alla lista interna |
-| `rimuoviTask(Task t)` | Rimuove una task dalla lista |
+| `aggiungiTask(Task t)` | Aggiunge una task alla lista interna (lancia `IllegalArgumentException` se `t` è `null`) |
+| `rimuoviTask(Task t)` | Rimuove una task dalla lista (lancia `IllegalArgumentException` se `t` è `null`) |
 | `getTasks()` | Restituisce una **copia immutabile** della lista (`List.copyOf`) |
 
 > [!IMPORTANT]
@@ -424,3 +427,32 @@ flowchart TD
 | **Guard Clause** | Pattern in cui le condizioni di errore vengono controllate all'inizio del metodo con `return` anticipato |
 | **Copia difensiva** | Restituire una copia dei dati interni anziché il riferimento diretto, per proteggere l'incapsulamento |
 | **Zebra Striping** | Alternanza di colori di sfondo tra righe pari e dispari per migliorare la leggibilità |
+| **Fail-Fast** | Principio di design che segnala immediatamente l'errore sollevando un'eccezione non appena un input non è valido |
+| **Prevenzione vs Cattura** | Strategia per cui le `RuntimeException` (es. `NullPointerException`) si evitano con `if` anziché mascherarle con `try-catch` |
+
+---
+
+## 9. Gestione delle Eccezioni Runtime
+
+La gestione degli errori e delle eccezioni segue i principi di ingegneria del software orientati alla robustezza e alla chiarezza del debug:
+
+### 9.1 Principi Guida Adottati
+
+1. **Prevenzione attiva anziché cattura passiva**: le eccezioni di tipo `RuntimeException` (come `NullPointerException`) non vengono avvolte in blocchi `try-catch`, ma prevenute all'origine tramite controlli condizionali (`if`).
+2. **Nessuna cattura generica (`catch (Exception e)`)**: il codice non inghiotte eccezioni generiche né nasconde bug di runtime.
+3. **Fail-Fast immediato**: i metodi del dominio verificano i parametri in ingresso prima di procedere. Se un valore non è valido, viene sollevata tempestivamente un'eccezione non controllata specifica (`IllegalArgumentException` o `IllegalStateException`).
+4. **Nessun uso di eccezioni per il controllo di flusso**: il normale flusso logico dell'interfaccia e del controller non fa leva sul lancio o sulla cattura di eccezioni.
+5. **Documentazione esplicita via `@throws`**: ogni metodo che può sollevare un'eccezione documenta nel proprio Javadoc la condizione esatta che la scatena.
+
+### 9.2 Mappa delle Validazioni e delle Eccezioni
+
+| Classe | Metodo | Condizione | Eccezione Sollevata / Strategia |
+|---|---|---|---|
+| [`Task`](file:///home/carl/projects/test_java/taskm/model/Task.java) | `setDescrizione(String)` | `descrizione == null` oppure vuota | `IllegalArgumentException` (Fail-Fast) |
+| [`Task`](file:///home/carl/projects/test_java/taskm/model/Task.java) | `setPriorita(Priorita)` | `priorita == null` | `IllegalArgumentException` (Fail-Fast) |
+| [`TaskModel`](file:///home/carl/projects/test_java/taskm/model/TaskModel.java) | `aggiungiTask(Task)` | `t == null` | `IllegalArgumentException` (Fail-Fast) |
+| [`TaskModel`](file:///home/carl/projects/test_java/taskm/model/TaskModel.java) | `rimuoviTask(Task)` | `t == null` | `IllegalArgumentException` (Fail-Fast) |
+| [`TaskView`](file:///home/carl/projects/test_java/taskm/view/TaskView.java) | `getSceltaPriorita()` | Nessun elemento selezionato nel JComboBox | `IllegalStateException` |
+| [`TaskView`](file:///home/carl/projects/test_java/taskm/view/TaskView.java) | `aggiornaLista(List<Task>)` | `tasks == null` | `IllegalArgumentException` |
+| [`TaskCellRenderer`](file:///home/carl/projects/test_java/taskm/view/TaskCellRenderer.java) | `getListCellRendererComponent(...)` | `task == null` | Prevenzione difensiva (reset label, no eccezione) |
+| [`TaskController`](file:///home/carl/projects/test_java/taskm/controller/TaskController.java) | Metodi azione (aggiungi, elimina, completa) | Selezione o testo non validi | Guard clauses con `return` anticipato (no eccezioni) |
